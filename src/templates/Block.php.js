@@ -20,8 +20,8 @@ class <%moduleClassPrefix%>Block extends BlockBase {
   public function build() {
     $form = \\Drupal::formBuilder()->getForm('Drupal\\<%moduleMachineName%>\\Form\\<%moduleClassPrefix%>ConfigForm');
 
-    if (isset($form['sample_wysiwyg'])) {
-      return $form['sample_wysiwyg']['#value'];
+    if (isset($form['sample_ckeditor'])) {
+      return $form['sample_ckeditor']['#value'];
     } else {
       return [
         '#markup' => 'Sample block output'

@@ -2,5 +2,5 @@ module.exports = `name: <%moduleDisplayName%>
 core: 8.x
 type: module
 description: <%moduleDisplayName%>
-package: 360 Custom
+package: Custom
 configure: <%moduleMachineName%>.settings`;

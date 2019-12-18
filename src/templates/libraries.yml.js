@@ -1,4 +1,4 @@
-module.exports = `<%moduleMachineName%>:
+module.exports = `assets:
   version: 1.x
   css:
     theme:

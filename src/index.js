@@ -2,14 +2,18 @@ const fs = require('fs');
 const { cli } = require('cli-ux');
 const { Command, flags } = require('@oclif/command');
 
-const checkCreateRootFileFunc = require('./tasks/check_create_root_file');
+const checkCreateRootFile = require('./tasks/check_create_root_file');
+const createBasicFileStructure = require('./tasks/create_basic_file_structure');
 const deleteFolderRecursive = require('./tasks/delete_folder_recursive');
 const getRequiredValue = require('./tasks/get_required_value');
+const getFormFields = require('./tasks/get_form_fields');
 const createBlockFileStructure = require('./tasks/create_block_file_structure');
+const createConfigFormFileStructure = require('./tasks/create_config_form_file_structure');
+const createCssAndJsFileStructure = require('./tasks/create_css_js_structure');
 
 class DrupalModuleCliCommand extends Command {
   static args = [
-    { name: 'moduleName'}
+    { name: 'moduleName' }
   ];
 
   createDisplayName(inputtedName) {
@@ -32,13 +36,13 @@ class DrupalModuleCliCommand extends Command {
     }
 
     const moduleDisplayName = this.createDisplayName(inputtedModuleName);
-    const moduleMachineName = inputtedModuleName.toLowerCase().split('-').join('_');
+    const moduleMachineName = inputtedModuleName.toLowerCase().split('-').join('_').split(' ').join('_');
 
     this.log(`Building ${moduleDisplayName} as ${moduleMachineName}`);
 
     if (fs.existsSync(moduleMachineName)) {
       this.log(`Module directory "${moduleMachineName}" already exists.`);
-      const overwrite = await getRequiredValue('Would you like to overwrite it?', ['y', 'n'], this);
+      const overwrite = await getRequiredValue('Would you like to overwrite it? (y/n)', ['y', 'n'], this);
       if (overwrite === 'n') {
         this.log('Exiting Module installation process.');
         return;
@@ -48,59 +52,38 @@ class DrupalModuleCliCommand extends Command {
     }
     
     fs.mkdirSync(moduleMachineName);
-    this.createBasicFileStructure(moduleMachineName, moduleDisplayName);
+    
+    createBasicFileStructure(moduleMachineName, moduleDisplayName);
 
     const includeCssAndJs = await getRequiredValue('Include CSS and JavaScript? (y/n)', ['y', 'n'], this);
-    const includeConfigForm = await getRequiredValue('Include a Configuration Form? (y/n)', ['y', 'n'], this);
+    const includeSettingsForm = await getRequiredValue('Include a Settings Form? (y/n)', ['y', 'n'], this);
     const includeBlock = await getRequiredValue('Include a Block? (y/n)', ['y', 'n'], this);
+    
 
-    if (includeCssAndJs === 'y') {
-      this.createCssAndJsFileStructure(moduleMachineName, moduleDisplayName);
+    if (includeSettingsForm === 'y') {
+      const addFormFields = await getRequiredValue('Add Fields to Config Form? (y/n)', ['y', 'n'], this);
+
+      let fields = [];
+      if (addFormFields === 'y') {
+        fields = await getFormFields(this);
+      }
+
+      checkCreateRootFile(moduleMachineName, moduleDisplayName, 'links.menu.yml');
+      checkCreateRootFile(moduleMachineName, moduleDisplayName, 'permissions.yml');
+      checkCreateRootFile(moduleMachineName, moduleDisplayName, 'routing.yml');
+      createConfigFormFileStructure(moduleMachineName, moduleDisplayName, fields);
     }
 
-    if (includeConfigForm === 'y') {
-      this.createConfigFormFileStructure(moduleMachineName, moduleDisplayName);
+    if (includeCssAndJs === 'y') {
+      createCssAndJsFileStructure(moduleMachineName, moduleDisplayName);
     }
 
     if (includeBlock === 'y') {
       createBlockFileStructure(moduleMachineName, moduleDisplayName);
     }
-  }
 
-  createBasicFileStructure(machineName, displayName) {
-    checkCreateRootFileFunc(machineName, displayName, 'info.yml');
-    checkCreateRootFileFunc(machineName, displayName, 'module');
-  }
-
-  createConfigFormFileStructure(machineName, displayName) {
-    const moduleClassPrefix = displayName.split(' ').join('');
-
-    checkCreateRootFileFunc(machineName, displayName, 'links.menu.yml');
-    checkCreateRootFileFunc(machineName, displayName, 'permissions.yml');
-    checkCreateRootFileFunc(machineName, displayName, 'routing.yml');
-    this.checkCreateDir(`${machineName}/src`);
-    this.checkCreateDir(`${machineName}/src/Form`);
-    this.checkCreateEmptyFile(`${machineName}/src/Form/${moduleClassPrefix}Form.php`);
-  }
-
-  createCssAndJsFileStructure(machineName, displayName) {
-    checkCreateRootFileFunc(machineName, displayName, 'libraries.yml');
-    this.checkCreateDir(`${machineName}/css`);
-    this.checkCreateEmptyFile(`${machineName}/css/${machineName}.css`);
-    this.checkCreateDir(`${machineName}/js`);
-    this.checkCreateEmptyFile(`${machineName}/js/${machineName}.js`);
-  }
-
-  checkCreateDir(dirName) {
-    if (!fs.existsSync(dirName)) {
-      fs.mkdirSync(dirName);
-    }
-  }
-
-  checkCreateEmptyFile(fileName) {
-    if (!fs.existsSync(fileName)) {
-      fs.writeFileSync(fileName, '');
-    }
+    this.log(`Your module "${moduleMachineName}" is ready.`);
+    this.log(`Navigate into by running "cd ${moduleMachineName}".`);
   }
 }
 

@@ -27,20 +27,8 @@ class <%moduleClassPrefix%>ConfigForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('<%moduleMachineName%>.settings');
 
-    $form['sample_textfield'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Sample Textfield'),
-      '#description' => $this->t('Enter Description Here'),
-      '#default_value' => $config->get('sample_textfield') ?: $this->t(''),
-    ];
-
-    $form['sample_wysiwyg'] = [
-      '#type'  => 'text_format',
-      '#title' => $this->t('Sample Wysiwyg'),
-      '#format' => 'full_html',
-      '#default_value' => $config->get('sample_wysiwyg')['value'] ?: $this->t(''),
-    ];
-
+    <%formFields%>
+    
     return parent::buildForm($form, $form_state);
   }
 
@@ -51,8 +39,7 @@ class <%moduleClassPrefix%>ConfigForm extends ConfigFormBase {
     $config = $this->config('<%moduleMachineName%>.settings');
     $values = $form_state->getValues();
 
-    $config->set('sample_textfield', $values['sample_textfield']);
-    $config->set('sample_wysiwyg', $values['sample_wysiwyg']);
+    <%setFormFields%>
     $config->save();
 
     parent::submitForm($form, $form_state);

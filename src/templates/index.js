@@ -1,6 +1,6 @@
 const info = require('./info.yml.js');
 const libraries = require('./libraries.yml.js');
-const links = require('./links.menu.yml.js/index.js');
+const links = require('./links.menu.yml.js');
 const moduleFile = require('./module.js');
 const permissions = require('./permissions.yml.js');
 const routing = require('./routing.yml.js');
