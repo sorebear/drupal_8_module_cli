@@ -3,6 +3,7 @@ const fs = require('fs');
 const attachJsVariableTemplate = require('../templates/attach-js-variable');
 const moduleTemplate = require('../templates/files/module');
 const infoTemplate = require('../templates/files/info.yml');
+const checkCreateEmptyFile = require('./check_create_empty_file');
 
 module.exports = (modOptions) => {
   const { displayName, fields = [], includeConfigForm, includeCssJs, machineName, varName } = modOptions;
@@ -17,22 +18,27 @@ module.exports = (modOptions) => {
   }
 
   if (!fs.existsSync(`${machineName}/${machineName}.module`)) {
-    let fieldsString = '';
-    fields.forEach((field) => {
-      if (field.accessibleInJs) {
-        let fieldString = attachJsVariableTemplate;
-        fieldString = fieldString.replace(/<%fieldMachineName%>/g, field.fieldMachineName);
-        fieldString = fieldString.replace(/<%fieldVarName%>/g, field.fieldVarName);
-        fieldString = fieldString.replace(/<%moduleVarName%>/g, varName);
-        fieldsString += fieldString;
-      }
-    });
-
-    let tpl = moduleTemplate;
-    tpl = tpl.replace(/<%attachJsVariables%>/g, fieldsString);
-    tpl = tpl.replace(/<%moduleMachineName%>/g, machineName);
-    tpl = tpl.replace(/<%attachLibrary%>/g, includeCssJs ? `$page['#attached']['library'][] = '${machineName}/assets';` : '');
-
-    fs.writeFileSync(`${machineName}/${machineName}.module`, tpl);
+    if (includeConfigForm || includeCssJs) {
+      let fieldsString = '';
+      fields.forEach((field) => {
+        if (field.accessibleInJs) {
+          let fieldString = attachJsVariableTemplate;
+          fieldString = fieldString.replace(/<%fieldMachineName%>/g, field.fieldMachineName);
+          fieldString = fieldString.replace(/<%fieldVarName%>/g, field.fieldVarName);
+          fieldString = fieldString.replace(/<%moduleVarName%>/g, varName);
+          fieldsString += fieldString;
+        }
+      });
+  
+      let tpl = moduleTemplate;
+      tpl = tpl.replace(/<%attachJsVariables%>/g, fieldsString);
+      tpl = tpl.replace(/<%moduleMachineName%>/g, machineName);
+      tpl = tpl.replace(/<%getConfig%>/g, includeConfigForm ? `$config = \Drupal::config('${machineName}.settings');` : '');
+      tpl = tpl.replace(/<%attachLibrary%>/g, includeCssJs ? `$page['#attached']['library'][] = '${machineName}/assets';` : '');
+  
+      fs.writeFileSync(`${machineName}/${machineName}.module`, tpl);
+    } else {
+      checkCreateEmptyFile(`${machineName}/${machineName}.module`);
+    }
   }
 }
