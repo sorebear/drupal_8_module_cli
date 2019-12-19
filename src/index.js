@@ -2,6 +2,7 @@ const fs = require('fs');
 const { cli } = require('cli-ux');
 const { Command, flags } = require('@oclif/command');
 
+const generateDisplayName = require('./tasks/generate_display_name');
 const checkCreateRootFile = require('./tasks/check_create_root_file');
 const createBasicFileStructure = require('./tasks/create_basic_file_structure');
 const deleteFolderRecursive = require('./tasks/delete_folder_recursive');
@@ -16,13 +17,12 @@ class DrupalModuleCliCommand extends Command {
     { name: 'moduleName' }
   ];
 
-  createDisplayName(inputtedName) {
-    const nameArr = inputtedName.split(/_|-/);
-    return nameArr.map((word) => {
-      const wordArr = word.split('');
-      wordArr[0] = wordArr[0].toUpperCase();
-      return wordArr.join('');
-    }).join(' ');
+  static modOptions = {}
+
+  updateModOptions(key, value) {
+    const updatedModOptions = { ...this.modOptions };
+    updatedModOptions[key] = value;
+    this.modOptions = updatedModOptions;
   }
 
   async run() {
@@ -35,8 +35,17 @@ class DrupalModuleCliCommand extends Command {
       inputtedModuleName = args.moduleName;
     }
 
-    const moduleDisplayName = this.createDisplayName(inputtedModuleName);
-    const moduleMachineName = inputtedModuleName.toLowerCase().split('-').join('_').split(' ').join('_');
+    const moduleDisplayName = generateDisplayName(inputtedModuleName);
+    const moduleMachineName = inputtedModuleName.toLowerCase().split(/-|\ /).join('_');
+    const moduleClassPrefix = moduleDisplayName.split(' ').join('');
+    const moduleVarName = moduleClassPrefix[0].toLowerCase() + moduleClassPrefix.slice(1);
+    const moduleUrl = moduleMachineName.split('_').join('-');
+
+    this.updateModOptions('machineName', moduleMachineName);
+    this.updateModOptions('displayName', moduleDisplayName);
+    this.updateModOptions('classPrefix', moduleClassPrefix);
+    this.updateModOptions('varName', moduleVarName);
+    this.updateModOptions('url', moduleUrl);
 
     this.log(`Building ${moduleDisplayName} as ${moduleMachineName}`);
 
@@ -53,33 +62,36 @@ class DrupalModuleCliCommand extends Command {
     
     fs.mkdirSync(moduleMachineName);
     
-    createBasicFileStructure(moduleMachineName, moduleDisplayName);
-
     const includeCssAndJs = await getRequiredValue('Include CSS and JavaScript? (y/n)', ['y', 'n'], this);
     const includeSettingsForm = await getRequiredValue('Include a Settings Form? (y/n)', ['y', 'n'], this);
-    const includeBlock = await getRequiredValue('Include a Block? (y/n)', ['y', 'n'], this);
     
+    this.updateModOptions('includeCssJs', includeCssAndJs === 'y');
+    this.updateModOptions('includeConfigForm', includeSettingsForm === 'y');
 
-    if (includeSettingsForm === 'y') {
+    if (this.modOptions.includeConfigForm) {
       const addFormFields = await getRequiredValue('Add Fields to Config Form? (y/n)', ['y', 'n'], this);
-
-      let fields = [];
+      
       if (addFormFields === 'y') {
-        fields = await getFormFields(this);
+        const fields = await getFormFields(this.modOptions, this);
+        this.updateModOptions('fields', fields);
       }
 
-      checkCreateRootFile(moduleMachineName, moduleDisplayName, 'links.menu.yml');
-      checkCreateRootFile(moduleMachineName, moduleDisplayName, 'permissions.yml');
-      checkCreateRootFile(moduleMachineName, moduleDisplayName, 'routing.yml');
-      createConfigFormFileStructure(moduleMachineName, moduleDisplayName, fields);
+      checkCreateRootFile(this.modOptions, 'links.menu.yml');
+      checkCreateRootFile(this.modOptions, 'permissions.yml');
+      checkCreateRootFile(this.modOptions, 'routing.yml');
+      createConfigFormFileStructure(this.modOptions);
     }
 
-    if (includeCssAndJs === 'y') {
-      createCssAndJsFileStructure(moduleMachineName, moduleDisplayName);
+    if (this.modOptions.includeCssJs) {
+      createCssAndJsFileStructure(this.modOptions);
     }
+
+    const includeBlock = await getRequiredValue('Include a Block? (y/n)', ['y', 'n'], this);
+
+    createBasicFileStructure(this.modOptions);
 
     if (includeBlock === 'y') {
-      createBlockFileStructure(moduleMachineName, moduleDisplayName);
+      createBlockFileStructure(this.modOptions);
     }
 
     this.log(`Your module "${moduleMachineName}" is ready.`);

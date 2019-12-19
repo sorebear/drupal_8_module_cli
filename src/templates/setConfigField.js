@@ -1,2 +1,2 @@
-module.exports = `$config->set('<%fieldName%>', $values['<%fieldName%>']);
+module.exports = `$config->set('<%fieldMachineName%>', $values['<%fieldMachineName%>']);
     `;

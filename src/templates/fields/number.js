@@ -1,7 +1,7 @@
 module.exports = `$form['<%fieldMachineName%>'] = array(
-      '#type' => 'checkbox',
+      '#type' => 'number',
       '#title' => $this->t('<%fieldTitle%>'),
-      '#default_value' => $this->t('<%fieldMachineName%>') ?: FALSE,
+      '#default_value' => $this->t('<%fieldMachineName%>') ?: 0,
     );
 
     `;

@@ -28,7 +28,6 @@ class <%moduleClassPrefix%>ConfigForm extends ConfigFormBase {
     $config = $this->config('<%moduleMachineName%>.settings');
 
     <%formFields%>
-    
     return parent::buildForm($form, $form_state);
   }
 

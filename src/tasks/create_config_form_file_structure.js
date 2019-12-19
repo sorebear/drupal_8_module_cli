@@ -2,11 +2,11 @@ const fs = require('fs');
 const checkCreateDir = require('./check_create_dir');
 const setConfigField = require('../templates/setConfigField');
 const configFormTemplate = require('../templates/ConfigForm.php');
-const checkboxTemplate = require('../templates/fields/checkbox');
-const textfieldTemplate = require('../templates/fields/checkbox');
-const textformatTemplate = require('../templates/fields/text_format');
 
-module.exports = (machineName, displayName, fields) => {
+const fieldTemplates = require('../templates/fields');
+
+module.exports = (modOptions) => {
+  const { displayName, fields = [], machineName } = modOptions;
   const moduleClassPrefix = displayName.split(' ').join('');
   const moduleUrl = machineName.split('_').join('-') ;
  
@@ -15,22 +15,9 @@ module.exports = (machineName, displayName, fields) => {
 
   let formFields = '';
   fields.forEach((field) => {
-    let fieldTemplate = '';
-    switch (field.fieldType) {
-      case 'textfield':
-        fieldTemplate = textfieldTemplate;
-        break;
-      case 'text_format':
-        fieldTemplate = textformatTemplate;
-        break;
-      case 'checkbox':
-        fieldTemplate = checkboxTemplate;
-        break;
-      default:
-        fieldTemplate = '';
-    }
+    let fieldTemplate = fieldTemplates[field.fieldType];
 
-    fieldTemplate = fieldTemplate.replace(/<%fieldName%>/g, field.fieldName);
+    fieldTemplate = fieldTemplate.replace(/<%fieldMachineName%>/g, field.fieldMachineName);
     fieldTemplate = fieldTemplate.replace(/<%fieldTitle%>/g, field.fieldTitle);
     formFields += fieldTemplate;
   });
@@ -38,7 +25,7 @@ module.exports = (machineName, displayName, fields) => {
   let setFormFields = '';
   fields.forEach((field) => {
     let setFieldTemplate = setConfigField;
-    setFieldTemplate = setFieldTemplate.replace(/<%fieldName%>/g, field.fieldName);
+    setFieldTemplate = setFieldTemplate.replace(/<%fieldMachineName%>/g, field.fieldMachineName);
     setFormFields += setFieldTemplate;
   });
 
