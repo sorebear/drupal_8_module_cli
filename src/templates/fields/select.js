@@ -5,7 +5,7 @@ module.exports = `$form['<%fieldMachineName%>'] = array(
         'value_1' => 'Label 1',
         'value_2' => 'Label 2',
       ],
-      '#default_value' => $this->t('<%fieldMachineName%>') ?: NULL,
+      '#default_value' => $config->get('<%fieldMachineName%>') ?: NULL,
     );
 
     `;

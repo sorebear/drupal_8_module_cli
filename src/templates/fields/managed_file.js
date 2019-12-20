@@ -5,7 +5,7 @@ module.exports = `$form['<%fieldMachineName%>'] = array(
       '#upload_validators' => [
         'file_validate_extensions' => ['csv']
       ],
-      '#default_value' => $this->t('<%fieldMachineName%>') ?: NULL,
+      '#default_value' => $config->get('<%fieldMachineName%>') ?: NULL,
     );
 
     `;

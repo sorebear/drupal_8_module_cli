@@ -1,4 +1,4 @@
-module.exports = `name: <%moduleMachineName%>
+module.exports = `name: <%moduleDisplayName%>
 core: 8.x
 type: module
 description: <%moduleDisplayName%>
