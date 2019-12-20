@@ -1,9 +1,9 @@
 const fs = require('fs');
 
-const attachJsVariableTemplate = require('../templates/attach-js-variable');
-const moduleTemplate = require('../templates/files/module');
-const infoTemplate = require('../templates/files/info.yml');
 const checkCreateEmptyFile = require('./check_create_empty_file');
+const infoTemplate = require('../templates/root_files/info.yml');
+const moduleTemplate = require('../templates/root_files/module');
+const attachJsVariableTemplate = require('../templates/partials/module/attach_js_variable');
 
 module.exports = (modOptions) => {
   const { displayName, fields = [], includeConfigForm, includeCssJs, machineName, varName } = modOptions;

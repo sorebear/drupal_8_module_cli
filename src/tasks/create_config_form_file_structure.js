@@ -1,8 +1,8 @@
 const fs = require('fs');
-const checkCreateDir = require('./check_create_dir');
-const setConfigField = require('../templates/setConfigField');
-const configFormTemplate = require('../templates/ConfigForm.php');
 
+const checkCreateDir = require('./check_create_dir');
+const configFormTemplate = require('../templates/ConfigForm.php');
+const setConfigField = require('../templates/partials/ConfigForm/set_config_field');
 const fieldTemplates = require('../templates/fields');
 
 module.exports = (modOptions) => {

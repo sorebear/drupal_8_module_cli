@@ -1,5 +1,5 @@
 const fs = require('fs');
-const templates = require('../templates/files');
+const templates = require('../templates/root_files');
 
 module.exports = function(modOptions, extension) {
   const { classPrefix, machineName, displayName, url } = modOptions;

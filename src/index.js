@@ -2,12 +2,12 @@ const fs = require('fs');
 const { cli } = require('cli-ux');
 const { Command, flags } = require('@oclif/command');
 
-const generateDisplayName = require('./tasks/generate_display_name');
+const getDisplayName = require('./functions/get_display_name');
+const getRequiredValue = require('./functions/get_required_value');
 const checkCreateRootFile = require('./tasks/check_create_root_file');
-const createBasicFileStructure = require('./tasks/create_basic_file_structure');
+const createInfoAndModuleFile = require('./tasks/create_info_and_module_file');
 const deleteFolderRecursive = require('./tasks/delete_folder_recursive');
-const getRequiredValue = require('./tasks/get_required_value');
-const getFormFields = require('./tasks/get_form_fields');
+const getFormFields = require('./commands/get_form_fields');
 const createBlockFileStructure = require('./tasks/create_block_file_structure');
 const createConfigFormFileStructure = require('./tasks/create_config_form_file_structure');
 const createCssAndJsFileStructure = require('./tasks/create_css_js_structure');
@@ -35,7 +35,7 @@ class DrupalModuleCliCommand extends Command {
       inputtedModuleName = args.moduleName;
     }
 
-    const moduleDisplayName = generateDisplayName(inputtedModuleName);
+    const moduleDisplayName = getDisplayName(inputtedModuleName);
     const moduleMachineName = inputtedModuleName.toLowerCase().split(/-|\ /).join('_');
     const moduleClassPrefix = moduleDisplayName.split(' ').join('');
     const moduleVarName = moduleClassPrefix[0].toLowerCase() + moduleClassPrefix.slice(1);
@@ -88,7 +88,7 @@ class DrupalModuleCliCommand extends Command {
 
     const includeBlock = await getRequiredValue('Include a Block? (y/n)', ['y', 'n'], this);
 
-    createBasicFileStructure(this.modOptions);
+    createInfoAndModuleFile(this.modOptions);
 
     if (includeBlock === 'y') {
       createBlockFileStructure(this.modOptions);

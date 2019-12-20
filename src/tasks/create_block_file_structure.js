@@ -7,6 +7,7 @@ module.exports = (modOptions) => {
 
   checkCreateDir(`${machineName}/src`);
   checkCreateDir(`${machineName}/src/Plugin`);
+  checkCreateDir(`${machineName}/src/Plugin/Block`);
 
   if (!fs.existsSync(`${machineName}/src/Plugin/${classPrefix}Block.php`)) {
     let tpl = blockTemplate;
@@ -14,6 +15,6 @@ module.exports = (modOptions) => {
     tpl = tpl.replace(/<%moduleDisplayName%>/g, displayName);
     tpl = tpl.replace(/<%moduleClassPrefix%>/g, classPrefix);
     tpl = tpl.replace(/<%moduleUrl%>/g, url);
-    fs.writeFileSync(`${machineName}/src/Plugin/${classPrefix}Block.php`, tpl);
+    fs.writeFileSync(`${machineName}/src/Plugin/Block/${classPrefix}Block.php`, tpl);
   }
 }

@@ -1,6 +1,6 @@
 module.exports = `<?php
 
-namespace Drupal\\custom_css\\Plugin\\Block;
+namespace Drupal\\<%moduleMachineName%>\\Plugin\\Block;
 
 use Drupal\\Core\\Block\\BlockBase;
 
@@ -9,7 +9,7 @@ use Drupal\\Core\\Block\\BlockBase;
  *
  * @Block(
  *   id = "<%moduleMachineName%>_block",
- *   admin_label = @Translation("<%moduleDisplayName%>"),
+ *   admin_label = @Translation("<%moduleDisplayName%> Block"),
  *   category = @Translation("Module"),
  * )
  */
