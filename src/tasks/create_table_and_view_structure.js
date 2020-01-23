@@ -7,7 +7,7 @@ const schemaTemplate = require('../templates/schema_columns/schema_function');
 
 module.exports = (app) => {
   const { modOptions } = app;
-  const { machineName, displayName, tableColumns, includeDbTable } = modOptions;
+  const { machineName, displayName, tableMachineName, tableColumns, includeDbTable } = modOptions;
 
   let tpl = installTemplate;
 
@@ -29,13 +29,12 @@ module.exports = (app) => {
       indexes += indexTpl;
     });
 
-    let schemaTpl = schemaTemplate;
-    schemaTpl = schemaTpl.replace(/<%indexes%>/g, indexes);
-    schemaTpl = schemaTpl.replace(/<%columns%>/g, columns);
-    schemaTpl = schemaTpl.replace(/<%displayName%>/, displayName);
-    schemaTpl = schemaTpl.replace(/<%tableMachineName%>/, machineName);
-    schemaTpl = schemaTpl.replace(/<%primaryColumnMachineName%>/g, tableColumns[0].columnMachineName);
-    tpl = tpl.replace(/<%schemaFunction%>/g, schemaTpl);
+    tpl = tpl.replace(/<%schemaFunction%>/g, schemaTemplate);
+    tpl = tpl.replace(/<%indexes%>/g, indexes);
+    tpl = tpl.replace(/<%columns%>/g, columns);
+    tpl = tpl.replace(/<%displayName%>/, displayName);
+    tpl = tpl.replace(/<%tableMachineName%>/, tableMachineName);
+    tpl = tpl.replace(/<%primaryColumnMachineName%>/g, tableColumns[0].columnMachineName);
 
     fs.writeFileSync(`${machineName}/${machineName}.install`, tpl);
   }

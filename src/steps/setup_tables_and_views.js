@@ -1,3 +1,6 @@
+const { cli } = require('cli-ux');
+
+const getDisplayName = require('../functions/get_display_name');
 const getTableColumns = require('../commands/get_table_columns');
 const getRequiredValue = require('../functions/get_required_value');
 const createTableAndViewStructure = require('../tasks/create_table_and_view_structure');
@@ -7,6 +10,13 @@ module.exports = async (app) => {
   app.updateModOptions('includeDbTable', includeDbTable === 'y');
 
   if (includeDbTable === 'y') {
+    const inputtedTableName = await cli.prompt('What is your Custom Table Name?');
+    const tableDisplayName = getDisplayName(inputtedTableName);
+    const tableMachineName = inputtedTableName.toLowerCase().split(/-|\ /).join('_');
+
+    app.updateModOptions('tableDisplayName', tableDisplayName);
+    app.updateModOptions('tableMachineName', tableMachineName);
+
     const tableColumns = await getTableColumns(app);
     app.updateModOptions('tableColumns', tableColumns);
 
