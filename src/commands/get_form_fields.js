@@ -5,7 +5,7 @@ const getDisplayName = require('../functions/get_display_name');
 const createNumOptions = require('../functions/create_numeric_options');
 const displayOptions = require('../functions/display_options');
 
-module.exports = async function(modOptions, thisVal) {
+module.exports = async (app) => {
   let continueAddingFields = true;
   const fields = [];
   const fieldTypeMap = {
@@ -19,11 +19,11 @@ module.exports = async function(modOptions, thisVal) {
 
   while (continueAddingFields) {
     const inputtedName = await cli.prompt('Field Title?');
-    const fieldTypeNum = await getRequiredValue(`Field Type?\n${displayOptions(fieldTypeMap)}`, createNumOptions(fieldTypeMap), thisVal);
+    const fieldTypeNum = await getRequiredValue(`Field Type?\n${displayOptions(fieldTypeMap)}`, createNumOptions(fieldTypeMap), app);
 
     let accessibleInJs = 'n'
-    if (modOptions.includeCssJs) {
-      accessibleInJs = await getRequiredValue('Make Value Available in JS File? (y/n)', ['y', 'n'], thisVal);
+    if (app.modOptions.includeCssJs) {
+      accessibleInJs = await getRequiredValue('Make Value Available in JS File? (y/n)', ['y', 'n'], app);
     }
 
     const fieldTitle = getDisplayName(inputtedName);
@@ -39,7 +39,7 @@ module.exports = async function(modOptions, thisVal) {
       accessibleInJs: accessibleInJs === 'y'
     });
 
-    const addAnotherField = await getRequiredValue('\nAdd Another Field? (y/n)', ['y', 'n'], thisVal);
+    const addAnotherField = await getRequiredValue('\nAdd Another Field? (y/n)', ['y', 'n'], app);
 
     if (addAnotherField === 'n') {
       continueAddingFields = false;
