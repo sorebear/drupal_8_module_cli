@@ -1,12 +1,25 @@
 const fs = require('fs');
 
-const checkCreateEmptyFile = require('./check_create_empty_file');
 const infoTemplate = require('../templates/root_files/info.yml');
-const moduleTemplate = require('../templates/root_files/module');
-const attachJsVariableTemplate = require('../templates/partials/module/attach_js_variable');
+const moduleTemplate = require('../templates/module/module');
+const viewsDataFunctionTemplate = require('../templates/module/views_data_function');
+const viewDataColumnTemplate = require('../templates/module/views_data_column');
+const attachJsVariableTemplate = require('../templates/module/attach_js_variable');
+const pageAttachAlterFunctionTemplate = require('../templates/module/page_attach_alter_function');
 
 module.exports = (modOptions) => {
-  const { displayName, fields = [], includeConfigForm, includeCssJs, machineName, varName } = modOptions;
+  const { 
+    displayName,
+    fields = [],
+    includeDbTableInViews,
+    includeConfigForm,
+    includeCssJs,
+    machineName,
+    tableColumns,
+    tableMachineName,
+    tableDisplayName,
+    varName
+  } = modOptions;
 
   if (!fs.existsSync(`${machineName}/${machineName}.info.yml`)) {
     let tpl = infoTemplate;
@@ -18,7 +31,13 @@ module.exports = (modOptions) => {
   }
 
   if (!fs.existsSync(`${machineName}/${machineName}.module`)) {
-    if (includeConfigForm || includeCssJs) {
+    let tpl = moduleTemplate;
+
+    if (!includeCssJs && !includeCssJs) {
+      tpl = tpl.replace(/<%pageAttachAlterFunction%>/g, '');
+    } else {
+      tpl = tpl.replace(/<%pageAttachAlterFunction%>/g, pageAttachAlterFunctionTemplate);
+
       let fieldsString = '';
       fields.forEach((field) => {
         if (field.accessibleInJs) {
@@ -30,15 +49,38 @@ module.exports = (modOptions) => {
         }
       });
   
-      let tpl = moduleTemplate;
       tpl = tpl.replace(/<%attachJsVariables%>/g, fieldsString);
       tpl = tpl.replace(/<%moduleMachineName%>/g, machineName);
       tpl = tpl.replace(/<%getConfig%>/g, includeConfigForm ? `$config = \Drupal::config('${machineName}.settings');` : '');
       tpl = tpl.replace(/<%attachLibrary%>/g, includeCssJs ? `$page['#attached']['library'][] = '${machineName}/assets';` : '');
-  
-      fs.writeFileSync(`${machineName}/${machineName}.module`, tpl);
-    } else {
-      checkCreateEmptyFile(`${machineName}/${machineName}.module`);
     }
+    
+    if (!includeDbTableInViews) {
+      tpl = tpl.replace(/<%viewsDataFunction%>/g, '');
+    } else {
+      tpl = tpl.replace(/<%viewsDataFunction%>/g, viewsDataFunctionTemplate);
+      tpl = tpl.replace(/<%tableMachineName%>/g, tableMachineName);
+      tpl = tpl.replace(/<%tableDisplayName%>/g, tableDisplayName);
+      tpl = tpl.replace(/<%primaryColumnMachineName%>/g, tableColumns[0].columnMachineName);
+      tpl = tpl.replace(/<%primaryColumnTitle%>/g, tableColumns[0].columnTitle);
+      tpl = tpl.replace(/<%moduleMachineName%>/g, machineName);
+      tpl = tpl.replace(/<%moduleDisplayName%>/g, displayName);
+
+      let viewDataColumns = '';
+
+      for (let i = 1; i < tableColumns.length; i += 1) {
+        let columnTpl = viewDataColumnTemplate;
+  
+        columnTpl = columnTpl.replace(/<%tableMachineName%>/g, tableMachineName);
+        columnTpl = columnTpl.replace(/<%columnMachineName%>/g, tableColumns[i].columnMachineName);
+        columnTpl = columnTpl.replace(/<%columnTitle%>/g, tableColumns[i].columnTitle);
+  
+        viewDataColumns += columnTpl;
+      }
+
+      tpl = tpl.replace(/<%viewsDataColumns%>/g, viewDataColumns);
+    }
+
+    fs.writeFileSync(`${machineName}/${machineName}.module`, tpl);
   }
 }

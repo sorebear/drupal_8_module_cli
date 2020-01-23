@@ -1,18 +1,25 @@
 const fs = require('fs');
 
-const installTemplate = require('../templates/root_files/install');
-const columnTemplates = require('../templates/schema_columns/index');
-const columnIndexTemplate = require('../templates/schema_columns/column_index');
-const schemaTemplate = require('../templates/schema_columns/schema_function');
+const installTemplate = require('../templates/install/install');
+const columnTemplates = require('../templates/install/schema_columns/index');
+const columnIndexTemplate = require('../templates/install/column_index');
+const schemaTemplate = require('../templates/install/schema_function');
 
 module.exports = (app) => {
   const { modOptions } = app;
-  const { machineName, displayName, tableMachineName, tableColumns, includeDbTable } = modOptions;
+  const { 
+    machineName, 
+    displayName,
+    tableDisplayName,
+    tableMachineName,
+    tableColumns,
+    includeDbTable
+  } = modOptions;
 
-  let tpl = installTemplate;
+  let installTpl = installTemplate;
 
   if (!includeDbTable) {
-    tpl = tpl.replace(/<%schemaFunction%>/g, '');
+    installTpl = installTpl.replace(/<%schemaFunction%>/g, '');
   } else {
     let columns = '';
     let indexes = '';
@@ -29,13 +36,13 @@ module.exports = (app) => {
       indexes += indexTpl;
     });
 
-    tpl = tpl.replace(/<%schemaFunction%>/g, schemaTemplate);
-    tpl = tpl.replace(/<%indexes%>/g, indexes);
-    tpl = tpl.replace(/<%columns%>/g, columns);
-    tpl = tpl.replace(/<%displayName%>/, displayName);
-    tpl = tpl.replace(/<%tableMachineName%>/, tableMachineName);
-    tpl = tpl.replace(/<%primaryColumnMachineName%>/g, tableColumns[0].columnMachineName);
+    installTpl = installTpl.replace(/<%schemaFunction%>/g, schemaTemplate);
+    installTpl = installTpl.replace(/<%indexes%>/g, indexes);
+    installTpl = installTpl.replace(/<%columns%>/g, columns);
+    installTpl = installTpl.replace(/<%displayName%>/, displayName);
+    installTpl = installTpl.replace(/<%tableMachineName%>/, tableMachineName);
+    installTpl = installTpl.replace(/<%primaryColumnMachineName%>/g, tableColumns[0].columnMachineName);
 
-    fs.writeFileSync(`${machineName}/${machineName}.install`, tpl);
+    fs.writeFileSync(`${machineName}/${machineName}.install`, installTpl);
   }
 }

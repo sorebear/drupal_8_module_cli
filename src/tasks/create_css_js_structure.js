@@ -3,8 +3,8 @@ const fs = require('fs');
 const checkCreateDir = require('./check_create_dir');
 const checkCreateEmptyFile = require('./check_create_empty_file');
 const checkCreateRootFile = require('./check_create_root_file');
-const jsFileTemplate = require('../templates/JsFile');
-const jsVariableTemplate = require('../templates/partials/JsFile/js_variable');
+const jsFileTemplate = require('../templates/js/js');
+const jsVariableTemplate = require('../templates/js/js_variable');
 
 module.exports = function(modOptions) {
   const { classPrefix, fields = [], machineName, varName } = modOptions;

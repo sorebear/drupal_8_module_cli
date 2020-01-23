@@ -1,9 +1,9 @@
 const fs = require('fs');
 
 const checkCreateDir = require('./check_create_dir');
-const configFormTemplate = require('../templates/ConfigForm.php');
-const setConfigField = require('../templates/partials/ConfigForm/set_config_field');
-const fieldTemplates = require('../templates/fields');
+const configFormTemplate = require('../templates/ConfigForm/ConfigForm.php');
+const setConfigField = require('../templates/ConfigForm/set_config_field');
+const fieldTemplates = require('../templates/ConfigForm/fields');
 
 module.exports = (modOptions) => {
   const { displayName, fields = [], machineName } = modOptions;

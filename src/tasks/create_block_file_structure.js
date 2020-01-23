@@ -1,6 +1,6 @@
 const fs = require('fs');
 const checkCreateDir = require('./check_create_dir');
-const blockTemplate = require('../templates/Block.php');
+const blockTemplate = require('../templates/Block/Block.php');
 
 module.exports = (modOptions) => {
   const { classPrefix, displayName, machineName, url } = modOptions;
