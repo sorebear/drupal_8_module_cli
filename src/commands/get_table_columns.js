@@ -1,4 +1,5 @@
 const { cli } = require('cli-ux');
+const chalk = require('chalk');
 
 const getRequiredValue = require('../functions/get_required_value');
 const getDisplayName = require('../functions/get_display_name');
@@ -15,9 +16,15 @@ module.exports = async (app) => {
   };
 
   let firstIteration = true;
+  let index = 1;
 
   while (continueAddingColumns) {
-    const inputtedName = await cli.prompt(firstIteration ? 'Primary Table Column Title?' : 'Table Column Title?');
+    if (index === 1) {
+      app.log(chalk.bold(chalk.cyanBright(chalk.underline(`\nTable "${app.modOptions.tableDisplayName}" Primary Column:`))));
+    } else {
+      app.log(chalk.bold(chalk.cyanBright(chalk.underline(`\nTable "${app.modOptions.tableDisplayName}" Column #${index}:`))));
+    }
+    const inputtedName = await cli.prompt(chalk.bold(chalk.cyanBright('Column Title?')));
     const columnTypeNum = firstIteration ? 0 : await getRequiredValue(`Column Type?\n${displayOptions(columnTypeMap)}`, createNumOptions(columnTypeMap), app);
 
     const columnTitle = getDisplayName(inputtedName);

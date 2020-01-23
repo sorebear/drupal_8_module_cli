@@ -1,3 +1,5 @@
+const chalk = require('chalk');
+
 const getRequiredValue = require('../functions/get_required_value');
 const checkCreateRootFile = require('../tasks/check_create_root_file');
 const getFormFields = require('../commands/get_form_fields');
@@ -5,14 +7,14 @@ const createConfigFormFileStructure = require('../tasks/create_config_form_file_
 const createCssAndJsFileStructure = require('../tasks/create_css_js_structure');
 
 module.exports = async (app) => {
-  const includeCssAndJs = await getRequiredValue('Include CSS and JavaScript? (y/n)', ['y', 'n'], app);
-  const includeSettingsForm = await getRequiredValue('Include a Settings Form? (y/n)', ['y', 'n'], app);
+  const includeCssAndJs = await getRequiredValue('\nInclude CSS and JavaScript? (y/n)', ['y', 'n'], app);
+  const includeSettingsForm = await getRequiredValue('\nInclude a Settings Form? (y/n)', ['y', 'n'], app);
   
   app.updateModOptions('includeCssJs', includeCssAndJs === 'y');
   app.updateModOptions('includeConfigForm', includeSettingsForm === 'y');
 
   if (app.modOptions.includeConfigForm) {
-    const addFormFields = await getRequiredValue('Add Fields to Config Form? (y/n)', ['y', 'n'], app);
+    const addFormFields = await getRequiredValue('\nAdd Fields to Config Form? (y/n)', ['y', 'n'], app);
     
     if (addFormFields === 'y') {
       const fields = await getFormFields(app);

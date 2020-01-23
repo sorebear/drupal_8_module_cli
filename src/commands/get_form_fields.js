@@ -1,4 +1,5 @@
 const { cli } = require('cli-ux');
+const chalk = require('chalk');
 
 const getRequiredValue = require('../functions/get_required_value');
 const getDisplayName = require('../functions/get_display_name');
@@ -13,17 +14,21 @@ module.exports = async (app) => {
     2: 'managed_file',
     3: 'number',
     4: 'select',
-    5: 'textfield',
-    6: 'text_format',
+    5: 'textarea',
+    6: 'textfield',
+    7: 'text_format',
   };
 
+  let index = 1;
+
   while (continueAddingFields) {
-    const inputtedName = await cli.prompt('Field Title?');
+    app.log(chalk.bold(chalk.cyanBright(chalk.underline(`\nConfig Form Field #${index}:`))));
+    const inputtedName = await cli.prompt(chalk.bold(chalk.cyanBright('Field Title?')));
     const fieldTypeNum = await getRequiredValue(`Field Type?\n${displayOptions(fieldTypeMap)}`, createNumOptions(fieldTypeMap), app);
 
     let accessibleInJs = 'n'
     if (app.modOptions.includeCssJs) {
-      accessibleInJs = await getRequiredValue('Make Value Available in JS File? (y/n)', ['y', 'n'], app);
+      accessibleInJs = await getRequiredValue('\nMake Value Available in JS File? (y/n)', ['y', 'n'], app);
     }
 
     const fieldTitle = getDisplayName(inputtedName);
@@ -44,6 +49,8 @@ module.exports = async (app) => {
     if (addAnotherField === 'n') {
       continueAddingFields = false;
     }
+
+    index += 1;
   }
 
   return fields;

@@ -1,4 +1,5 @@
 const { Command, flags } = require('@oclif/command');
+const chalk = require('chalk');
 
 const initialSetup = require('./steps/setup_inital');
 const setupCssJsAndConfigForm = require('./steps/setup_css_js_and_config');
@@ -16,15 +17,20 @@ class DrupalModuleCliCommand extends Command {
   }
 
   async run() {
-    await initialSetup(this);
+    const initComplete = await initialSetup(this);
+
+    if (!initComplete) {
+      return;
+    }
+    
     await setupCssJsAndConfigForm(this);
     await setupTablesAndViews(this);
     await setupBlockAndPage(this);
 
     createInfoAndModuleFile(this.modOptions);
 
-    this.log(`Your module "${this.modOptions.machineName}" is ready.`);
-    this.log(`Navigate into by running "cd ${this.modOptions.machineName}".`);
+    this.log(`\n✅ Your module ${chalk.bold(chalk.cyanBright(`"${this.modOptions.machineName}"`))} is ready.`);
+    this.log(`✅ Navigate into it by running ${chalk.bold(chalk.cyanBright(`"cd ${this.modOptions.machineName}"`))}.\n\n`);
   }
 }
 

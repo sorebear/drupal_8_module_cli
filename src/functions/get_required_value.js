@@ -1,4 +1,5 @@
 const { cli } = require('cli-ux');
+const chalk = require('chalk');
 
 module.exports = async (prompt, validResponsesArray, that) => {
   const response = await getRequiredValue(prompt, validResponsesArray, that);
@@ -6,7 +7,7 @@ module.exports = async (prompt, validResponsesArray, that) => {
 }
 
 const getRequiredValue = async (prompt, validResponsesArray, that) => {
-  const response = await displayPrompt(prompt);
+  const response = await displayPrompt(chalk.bold(chalk.cyanBright(prompt)));
   
   for (var i = 0; i < validResponsesArray.length; i += 1) {
     if (response.toLowerCase() == validResponsesArray[i]) {
