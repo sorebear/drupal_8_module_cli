@@ -25,15 +25,11 @@ module.exports = async (app) => {
       app.log(chalk.bold(chalk.cyanBright(chalk.underline(`\nTable "${app.modOptions.tableDisplayName}" Column #${index}:`))));
     }
     const inputtedName = await cli.prompt(chalk.bold(chalk.cyanBright('Column Title?')));
-    const columnTypeNum = firstIteration ? 0 : await getRequiredValue(`Column Type?\n${displayOptions(columnTypeMap)}`, createNumOptions(columnTypeMap), app);
+    const columnTypeNum = index === 1 ? 0 : await getRequiredValue(`Column Type?\n${displayOptions(columnTypeMap)}`, createNumOptions(columnTypeMap), app);
 
     const columnTitle = getDisplayName(inputtedName);
     const columnMachineName = columnTitle.toLowerCase().split(/\-|\ /).join('_');
-    const columnType = firstIteration ? 'primary' : columnTypeMap[columnTypeNum]
-    
-    if (firstIteration) {
-      firstIteration = false;
-    }
+    const columnType = index === 1 ? 'primary' : columnTypeMap[columnTypeNum]
 
     columns.push({
       columnMachineName,
@@ -46,6 +42,8 @@ module.exports = async (app) => {
     if (addAnotherColumn === 'n') {
       continueAddingColumns = false;
     }
+
+    index += 1;
   }
 
   return columns;

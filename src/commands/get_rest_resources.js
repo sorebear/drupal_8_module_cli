@@ -34,8 +34,8 @@ module.exports = async (app) => {
     const resourceMachineName = resourceDisplayName.toLowerCase().split(/\-|\ /).join('_');
     const resourceClassPrefix = resourceDisplayName.split(' ').join('');
 
-    const getFunction = getFunctionNum === '3' ? null : getFunctionsMap[getFunctionNum];
-    const postFunction = postFunctionNum === '4' ? null : postFunctionsMap[postFunctionNum];
+    const getFunction = getFunctionNum === '3' ? null : getFunctionNum;
+    const postFunction = postFunctionNum === '4' ? null : postFunctionNum;
     
     restResources.push({
       resourceMachineName,

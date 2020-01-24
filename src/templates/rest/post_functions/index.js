@@ -3,7 +3,7 @@ const deleteRow = require('./delete');
 const updateRow = require('./update');
 
 module.exports = {
-  'POST add($data)': addRow,
-  'POST delete($data)': deleteRow,
-  'POST update($data)': updateRow,
+  '1': addRow,
+  '2': deleteRow,
+  '3': updateRow,
 };
