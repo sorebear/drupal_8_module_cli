@@ -5,6 +5,7 @@ const initialSetup = require('./steps/setup_inital');
 const setupCssJsAndConfigForm = require('./steps/setup_css_js_and_config');
 const setupTablesAndViews = require('./steps/setup_tables_and_views');
 const setupBlockAndPage = require('./steps/setup_block_and_page');
+const setupRestResources = require('./steps/setup_rest_resources');
 const createInfoAndModuleFile = require('./tasks/create_info_and_module_file');
 
 class DrupalModuleCliCommand extends Command {
@@ -22,9 +23,10 @@ class DrupalModuleCliCommand extends Command {
     if (!initComplete) {
       return;
     }
-    
+
     await setupCssJsAndConfigForm(this);
     await setupTablesAndViews(this);
+    await setupRestResources(this);
     await setupBlockAndPage(this);
 
     createInfoAndModuleFile(this.modOptions);

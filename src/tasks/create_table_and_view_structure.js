@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+const checkCreateDir = require('../tasks/check_create_dir');
 const installTemplate = require('../templates/install/install');
 const columnTemplates = require('../templates/install/schema_columns/index');
 const columnIndexTemplate = require('../templates/install/column_index');
@@ -10,7 +11,6 @@ module.exports = (app) => {
   const { 
     machineName, 
     displayName,
-    tableDisplayName,
     tableMachineName,
     tableColumns,
     includeDbTable
@@ -37,6 +37,7 @@ module.exports = (app) => {
     });
 
     installTpl = installTpl.replace(/<%schemaFunction%>/g, schemaTemplate);
+    installTpl = installTpl.replace(/<%moduleMachineName%>/g, machineName)
     installTpl = installTpl.replace(/<%indexes%>/g, indexes);
     installTpl = installTpl.replace(/<%columns%>/g, columns);
     installTpl = installTpl.replace(/<%displayName%>/, displayName);
@@ -44,5 +45,7 @@ module.exports = (app) => {
     installTpl = installTpl.replace(/<%primaryColumnMachineName%>/g, tableColumns[0].columnMachineName);
 
     fs.writeFileSync(`${machineName}/${machineName}.install`, installTpl);
+    checkCreateDir(`${machineName}/config`);
+    checkCreateDir(`${machineName}/config/install`);
   }
 }

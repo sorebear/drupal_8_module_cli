@@ -7,7 +7,7 @@ const getRequiredValue = require('../functions/get_required_value');
 const deleteFolderRecursive = require('../tasks/delete_folder_recursive');
 
 module.exports = async (app) => {
-  const inputtedModuleName = await cli.prompt(chalk.bold(chalk.cyanBright('What is your module name?')));
+  const inputtedModuleName = await cli.prompt(chalk.bold(chalk.cyanBright('\nWhat is your module name?')));
   
   const moduleDisplayName = getDisplayName(inputtedModuleName);
   const moduleMachineName = inputtedModuleName.toLowerCase().split(/-|\ /).join('_');

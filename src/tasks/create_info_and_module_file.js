@@ -11,9 +11,11 @@ module.exports = (modOptions) => {
   const { 
     displayName,
     fields = [],
+    includeBlock,
     includeDbTableInViews,
     includeConfigForm,
     includeCssJs,
+    includeRestResources,
     machineName,
     tableColumns,
     tableMachineName,
@@ -26,6 +28,26 @@ module.exports = (modOptions) => {
     tpl = tpl.replace(/<%moduleMachineName%>/g, machineName);
     tpl = tpl.replace(/<%moduleDisplayName%>/g, displayName);
     tpl = tpl.replace(/<%configPath%>/g, includeConfigForm ? `configure: ${machineName}.settings` : '');
+
+    if (includeDbTableInViews || includeRestResources || includeBlock) {
+      let dependTpl = `dependencies:\n`;
+
+      if (includeBlock) {
+        dependTpl += `  - drupal:block\n`;
+      }
+
+      if (includeRestResources) {
+        dependTpl += `  - drupal:views\n`;
+      }
+
+      if (includeRestResources) {
+        dependTpl += `  - drupal:rest\n`;
+      }
+
+      tpl = tpl.replace(/<%dependencies%>/g, dependTpl);
+    } else {
+      tpl = tpl.replace(/<%dependencies%>/g, '');
+    }
 
     fs.writeFileSync(`${machineName}/${machineName}.info.yml`, tpl);
   }

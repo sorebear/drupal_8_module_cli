@@ -3,7 +3,7 @@ module.exports = `/**
 * 
 * Defines the database tables used by this module
 */
-function hr_pricing_calc_schema() {
+function <%moduleMachineName%>_schema() {
   $schema['<%tableMachineName%>'] = array(
     'description' => 'Custom Table for the <%displayName%> Module',
     'fields' => array(

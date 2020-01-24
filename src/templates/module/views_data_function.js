@@ -9,11 +9,13 @@ function <%moduleMachineName%>_views_data() {
 
   $data['<%tableMachineName%>']['table']['base'] = array(
     'field' => '<%primaryColumnMachineName%>',
-    'title' => t('<%primaryColumnTitle%>'),
+    'title' => t('<%tableDisplayName%>'),
     'help' => t('Custom table "<%tableDisplayName%>" from the <%moduleDisplayName%> module'),
     'weight' => -10,
   );
 
   <%viewsDataColumns%>
+
+  return $data;
 }
 `

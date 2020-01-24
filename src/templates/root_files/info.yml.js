@@ -3,4 +3,5 @@ core: 8.x
 type: module
 description: <%moduleDisplayName%>
 package: Custom
-<%configPath%>`
+<%configPath%>
+<%dependencies%>`;
