@@ -15,7 +15,6 @@ module.exports = async (app) => {
     3: 'tinyint',
   };
 
-  let firstIteration = true;
   let index = 1;
 
   while (continueAddingColumns) {
